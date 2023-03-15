@@ -10,7 +10,7 @@ class SingletonMeta(type):
         return cls._instances[cls]
     
 
-class RequestsWrapper(metaclass=SingletonMeta):
+class ApiClient(metaclass=SingletonMeta):
     def __init__(self, base_url):
         self.base_url = base_url
 

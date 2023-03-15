@@ -1,10 +1,10 @@
 from models.post import Post
-from .requests_wrapper import RequestsWrapper
+from .requests_wrapper import ApiClient
 from requests import Response
 from dataclasses import asdict
 
 
-class PostsApi(RequestsWrapper):
+class Posts(ApiClient):
     def __init__(self, base_url: str):
         super().__init__(base_url)
         self.posts_url = "posts"
@@ -15,8 +15,11 @@ class PostsApi(RequestsWrapper):
     def create_post(self, post: Post) -> Response:
         return self.post(self.posts_url, asdict(post))
 
-    def update_post(self, post_id: int, post: Post) -> Response:
-        return self.put(f"{self.posts_url}/{post_id}", asdict(post))
+    def update_post(self, post_id: int, *args) -> Response:
+        if type(args[0]) == Post:
+            return self.put(f"{self.posts_url}/{post_id}", asdict(args[0]))
+        elif type(args[0]) == dict:
+            return self.patch(f"{self.posts_url}/{post_id}", args[0])
 
     def partial_update_post(self, post_id: int, data: dict) -> Response:
         return self.patch(f"{self.posts_url}/{post_id}", data)

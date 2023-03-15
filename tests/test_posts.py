@@ -63,7 +63,7 @@ def test_partial_update_post(api):
     payload = {
         "title": "Partially Updated Test Post"
     }
-    response = api.partial_update_post(post_id, payload)
+    response = api.update_post(post_id, payload)
     assert response.status_code == 200
     assert response.json()["id"] == post_id
     assert response.json()["title"] == payload["title"]
