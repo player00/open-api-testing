@@ -1,4 +1,3 @@
-import pytest
 import allure
 from models.post import Post
 

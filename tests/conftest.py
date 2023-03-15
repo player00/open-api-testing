@@ -1,5 +1,5 @@
 import pytest
-from api.posts_api import Posts
+from api.posts import Posts
 from configuration import API_BASE_URL
 
 

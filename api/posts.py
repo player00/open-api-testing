@@ -1,5 +1,5 @@
 from models.post import Post
-from .requests_wrapper import ApiClient
+from api.api_client import ApiClient
 from requests import Response
 from dataclasses import asdict
 
