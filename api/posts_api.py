@@ -21,9 +21,6 @@ class Posts(ApiClient):
         elif type(args[0]) == dict:
             return self.patch(f"{self.posts_url}/{post_id}", args[0])
 
-    def partial_update_post(self, post_id: int, data: dict) -> Response:
-        return self.patch(f"{self.posts_url}/{post_id}", data)
-
     def delete_post(self, post_id: int) -> Response:
         return self.delete(f"{self.posts_url}/{post_id}")
 
