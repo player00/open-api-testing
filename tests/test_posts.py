@@ -1,5 +1,6 @@
 import pytest
 import allure
+from models.post import Post
 
 
 @allure.feature("Posts")
@@ -24,16 +25,14 @@ def test_get_post_by_id(api):
 @allure.story("Create a Post")
 @allure.severity(allure.severity_level.CRITICAL)
 def test_create_post(api):
-    payload = {
-        "title": "Test Post",
-        "body": "This is a test post",
-        "userId": 1
-    }
-    response = api.create_post(payload)
+    new_post = Post(title="New post title", body="New post body", userId=1)
+    response = api.create_post(new_post)
+
     assert response.status_code == 201
-    assert response.json()["title"] == payload["title"]
-    assert response.json()["body"] == payload["body"]
-    assert response.json()["userId"] == payload["userId"]
+    created_post = response.json()
+    assert created_post["title"] == new_post.title
+    assert created_post["body"] == new_post.body
+    assert created_post["userId"] == new_post.userId
 
 
 @allure.feature("Posts")
@@ -41,18 +40,19 @@ def test_create_post(api):
 @allure.severity(allure.severity_level.CRITICAL)
 def test_update_post(api):
     post_id = 1
-    payload = {
-        "id": post_id,
-        "title": "Updated Test Post",
-        "body": "This is an updated test post",
-        "userId": 1
-    }
-    response = api.update_post(post_id, payload)
+    updated_post = Post(
+        id=post_id,
+        title="Updated Test Post",
+        body="This is an updated test post",
+        userId=1
+    )
+    response = api.update_post(post_id, updated_post)
     assert response.status_code == 200
-    assert response.json()["id"] == post_id
-    assert response.json()["title"] == payload["title"]
-    assert response.json()["body"] == payload["body"]
-    assert response.json()["userId"] == payload["userId"]
+    response_data = response.json()
+    assert response_data["id"] == post_id
+    assert response_data["title"] == updated_post.title
+    assert response_data["body"] == updated_post.body
+    assert response_data["userId"] == updated_post.userId
 
 
 @allure.feature("Posts")
@@ -73,6 +73,10 @@ def test_partial_update_post(api):
 @allure.story("Delete a Post")
 @allure.severity(allure.severity_level.CRITICAL)
 def test_delete_post(api):
-    post_id = 1
-    response = api.delete_post(post_id)
-    assert response.status_code == 200
+    post_to_delete = api.create_post(
+        Post(title="Post to delete", body="This post will be deleted", userId=1)).json()
+    delete_response = api.delete_post(post_to_delete["id"])
+
+    assert delete_response.status_code == 200
+    get_response = api.get_post_by_id(post_to_delete["id"])
+    assert get_response.status_code == 404
